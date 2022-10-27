@@ -1,27 +1,28 @@
-j main
-
 .data
-
-matriz:	.space 9
+	matriz:	.byte ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+	jogadas: .word 0
+	fimJogadas: .word 4
+	comando: .byte 0
+	fimjogo: .byte 0
 
 .text
-
-.eqv fim_loop 9
-.eqv spacechr 32
-
-loop:
-loop.strt:
-loop.end:
-	addiu $t1, $zero, spacechr
-	addiu $t2, $zero, 0
-	addiu $t3, $zero, 9
-	sb $t1, matriz($t2)
-	addiu $t1, $t1, 1
-	blt $t2, $t3, loop
-	jr $ra
-exit:
-
-main:
-	la $t0, matriz
-	jal loop
+	j main
+	
+	tabuleiro:
+	verificaFimJogo:
+	usuario:
+	computador:
+	
+	main:
+		whilejogadas:
+			lw $t0, jogadas
+			lw $t1, fimJogadas
+			lw $t2, comando
+			lw $t3, fimjogo
+			
+			bgt $t0, $t1, whilejogadas.end # Se jogadas > 4 sair do while
+			
+		whilejogadas.end:
+		
+			
 	
