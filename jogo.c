@@ -106,7 +106,6 @@ int main()
         
         if(jogadas !=4 && fim_jogo == 0)
         {
-        
             if(comando == 1)
             {
                 Computador(tabuleiro, &comando);
