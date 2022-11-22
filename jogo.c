@@ -47,7 +47,7 @@ void VerificaFimJogo(char tabuleiro[3][3], int *fim_jogo)
 
 void Usuario(char tabuleiro[3][3], int *comando) //jogada do usuario
 {
-    int linha, coluna, jogada = 1;
+    int jogada = 1;
     
     while(jogada==1)
     {
