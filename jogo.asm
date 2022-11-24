@@ -112,19 +112,49 @@
 
 		jr $ra
 	usuario:
-		# $t1 = linha $t2 = coluna $t3 = jogada
+		# $t1 = linha 
+		# $t2 = coluna 
+		# $t3 = jogada
+		# $t4 = posição na string
 		li $t3, 1
 		
 		while_usuario:
+			# "Digite a Linha: "
 			bne $t3, 1, fim_while
 			li $v0, 4
 			la $a0, digiteLinha
 			syscall
-			# scanf
+			
+			# scanf linha:
+			li $v0, 5
+			syscall
+			move $t1, $v0
+			
+			# "Digite a Coluna: "
 			li $v0, 4
 			la $a0, digiteColuna
 			syscall
 			li $t3, 0
+			
+			# scanf coluna:
+			li $v0, 5
+			syscall
+			move $t2, $v0
+			
+			if (tabuleiro[linha][coluna] == ' ')
+       			{
+           			tabuleiro[linha][coluna] = 'X';
+            			jogada = 0;
+        		}
+        		# transforma informação linha coluna em uma posição na string
+        		mul $t4, $t1, 3 # multiplica linha por 3 e guarda em $t4
+        		addi $t4, $t4, $t2 # soma o resultado com o número de colunas
+        		
+        		
+        		
+			
+			j while_usuario
+			
 		
 		fim_while:
 		
