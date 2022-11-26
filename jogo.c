@@ -18,34 +18,47 @@ void Tabuleiro(char tabuleiro[3][3]) //renderizar tabuleiro
 
 void VerificaFimJogo(char tabuleiro[3][3], int *fim_jogo)
 {
-    if(tabuleiro [0][0] == 'X' && tabuleiro [0][1] == 'X' && tabuleiro [0][2] == 'X' ||
-       tabuleiro [1][0] == 'X' && tabuleiro [1][1] == 'X' && tabuleiro [1][2] == 'X' ||
-       tabuleiro [2][0] == 'X' && tabuleiro [2][1] == 'X' && tabuleiro [2][2] == 'X' ||
-       tabuleiro [0][0] == 'X' && tabuleiro [1][0] == 'X' && tabuleiro [2][0] == 'X' ||
-       tabuleiro [0][1] == 'X' && tabuleiro [1][1] == 'X' && tabuleiro [2][1] == 'X' ||
-       tabuleiro [0][2] == 'X' && tabuleiro [1][2] == 'X' && tabuleiro [2][2] == 'X' ||
-       tabuleiro [0][0] == 'X' && tabuleiro [1][1] == 'X' && tabuleiro [2][2] == 'X' ||
-       tabuleiro [0][2] == 'X' && tabuleiro [1][1] == 'X' && tabuleiro [2][0] == 'X')
+    int i, j;
+    char vencedor;
+    //verifica se o jogo acabou
+    for (i = 0; i < 3; i++)
     {
-        printf("Jogador 1 venceu!\n");
-        *fim_jogo = 1;
+        if (tabuleiro[i][0] == tabuleiro[i][1] && tabuleiro[i][1] == tabuleiro[i][2] && tabuleiro[i][0] != ' ')
+        {
+            *fim_jogo = 1;
+            vencedor = tabuleiro[i][0];
+        }
     }
-    else 
-    if(tabuleiro [0][0] == 'O' && tabuleiro [0][1] == 'O' && tabuleiro [0][2] == 'O' ||
-            tabuleiro [1][0] == 'O' && tabuleiro [1][1] == 'O' && tabuleiro [1][2] == 'O' ||
-            tabuleiro [2][0] == 'O' && tabuleiro [2][1] == 'O' && tabuleiro [2][2] == 'O' ||
-            tabuleiro [0][0] == 'O' && tabuleiro [1][0] == 'O' && tabuleiro [2][0] == 'O' ||
-            tabuleiro [0][1] == 'O' && tabuleiro [1][1] == 'O' && tabuleiro [2][1] == 'O' ||
-            tabuleiro [0][2] == 'O' && tabuleiro [1][2] == 'O' && tabuleiro [2][2] == 'O' ||
-            tabuleiro [0][0] == 'O' && tabuleiro [1][1] == 'O' && tabuleiro [2][2] == 'O' ||
-            tabuleiro [0][2] == 'O' && tabuleiro [1][1] == 'O' && tabuleiro [2][0] == 'O')
+    for (j = 0; j < 3; j++)
     {
-        printf("Jogador 2 venceu!\n");
+        if (tabuleiro[0][j] == tabuleiro[1][j] && tabuleiro[1][j] == tabuleiro[2][j] && tabuleiro[0][j] != ' ')
+        {
+            *fim_jogo = 1;
+            vencedor = tabuleiro[0][j];
+        }
+    }
+    if (tabuleiro[0][0] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[2][2] && tabuleiro[0][0] != ' ')
+    {
         *fim_jogo = 1;
-    }  
+        vencedor = tabuleiro[0][0];
+    }
+    if (tabuleiro[0][2] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[2][0] && tabuleiro[0][2] != ' ')
+    {
+        *fim_jogo = 1;
+        vencedor = tabuleiro[0][2];
+    }
+
+    if (vencedor == 'X')
+    {
+        printf("\nO jogador X venceu!\n");
+    }
+    else if (vencedor == 'O')
+    {
+        printf("\nO jogador O venceu!\n");
+    }
 }
 
-void Usuario(char tabuleiro[3][3], int *comando) //jogada do usuario
+void Usuario(char tabuleiro[3][3]) //jogada do usuario
 {
     int jogada = 1;
     
@@ -66,10 +79,9 @@ void Usuario(char tabuleiro[3][3], int *comando) //jogada do usuario
             printf("\n Jogada Invalida :( Tente outro lugar: \n");
         }        
     }
-    *comando = 1;
 }
 
-void Computador(char tabuleiro[3][3], int *comando) //jogada do computador
+void Computador(char tabuleiro[3][3]) //jogada do computador
 {
     int linha, coluna, jogador = 1;
     
@@ -84,7 +96,6 @@ void Computador(char tabuleiro[3][3], int *comando) //jogada do computador
             jogador = 0;
         }
     }
-    *comando = 0;
 }
 
 int main()
@@ -92,25 +103,23 @@ int main()
     char tabuleiro[3][3];
     memset(tabuleiro, ' ', sizeof(tabuleiro));
     int i, j;
-    int comando = 0, jogadas = 0, fim_jogo = 0;
+    int jogadas = 0, fim_jogo = 0;
     
     while(jogadas <= 4)
     {
        
-        if(comando == 0 && fim_jogo == 0)
+        if(fim_jogo == 0)
         {
             Tabuleiro(tabuleiro);
-            Usuario(tabuleiro, &comando);
+            Usuario(tabuleiro);
             VerificaFimJogo(tabuleiro, &fim_jogo);
         }
         
         if(jogadas !=4 && fim_jogo == 0)
         {
-            if(comando == 1)
-            {
-                Computador(tabuleiro, &comando);
-                VerificaFimJogo(tabuleiro, &fim_jogo);
-            }
+            
+            Computador(tabuleiro);
+            VerificaFimJogo(tabuleiro, &fim_jogo);
         }    
         jogadas++;
     }

@@ -2,8 +2,8 @@
 	matriz:	.asciiz "         "
 	jogadas: .word 0
 	fimJogadas: .word 4
-	comando: .word 0
 	fimjogo: .word 0
+	debug: .asciiz "\n DEBUG \n"
 	
 	msgJogoVelha: .asciiz "\n\n#####JOGO DA VELHA#####\n\n"
 	asciitabuleiro1: .asciiz "  "
@@ -163,14 +163,88 @@
 			
 		
 		while_usuario.end:
-		# *comando = 1
-		li $t0, 1
-		sw $t0, comando
 		
 	
 		jr $ra
 	verificaFimJogo:
+		# $t0 = i
+		# $t1 = j
+		# $t2 = vencedor
+		# $t3, $t4 = comparações
+		# $t6 = posição string
+		# $t7 = string começando por $t6
+		
+		li $t0, 0
+		li $t1, 0
+		
+		for_i:
+			beq $t0, 3, for_i.end # verificação do for (i < 3)
+			
+			# formatação de linhas e colunas para posição string
+			mul $t6, $t0, 3
+			
+			# pega primeiro elemento para verificar
+			add $t7, $t6, $s7
+        		lbu $t3, 0($t7)
+        		
+        		#pega segundo elemento para verificar
+        		lbu $t4, 1($t7)			
+			
+			#faz a primeira verificação
+			bne $t3, $t4, if_i.end 
+			if_i:
+				lbu $t3, 2($t7) # pega o próximo elemento para verificar com o anterior
+				bne $t4, $t3, if_i.end # verifica os dois
+				beq $t4, 32, if_i.end # verifica se for vazio sai do if
+				
+				li $s0, 1 # fim jogo = 1
+				#sw $s0, fimjogo # armazena na memória
+				
+				add $t2, $zero, $t4 # vencedor = ultimo elemento comparado ('O' ou 'X')
+				
+			if_i.end:
+			
+			addi $t0, $t0, 1 # i++
+			
+			j for_i
+		for_i.end:
+		
+		for_j:
+			beq $t1, 3, for_j.end # verificação do for (i < 3)
+			
+			# formatação de linhas e colunas para posição string
+			add $t6, $zero, $t1
+			
+			# pega primeiro elemento para verificar
+			add $t7, $t6, $s7
+        		lbu $t3, 0($t7)
+        		
+        		#pega segundo elemento para verificar
+        		lbu $t4, 3($t7)			
+			
+			#faz a primeira verificação
+			bne $t3, $t4, if_j.end 
+			if_j:
+				lbu $t3, 6($t7) # pega o próximo elemento para verificar com o anterior
+				bne $t4, $t3, if_j.end # verifica os dois
+				beq $t4, 32, if_j.end # verifica se não é vazio
+				
+				li $s0, 1 # fim jogo = 1
+				#sw $s0, fimjogo # armazena na memória
+				
+				add $t2, $zero, $t4 # vencedor = ultimo elemento comparado ('O' ou 'X')
+				
+				jr $ra
+			if_j.end:
+			
+			addi $t1, $t1, 1 # j++
+			
+			j for_j
+		for_j.end:
+		
+
 		jr $ra
+		
 	computador:
 		# $t0 = char pra substituir na string 
 		# $t3 = jogador
@@ -196,15 +270,11 @@
 			
 			# Caso não esteja vazia adiciona 1 a $t4 para tentar próxima posição
 			addi $t4, $t4, 1       			
-        		
 			
 			j while_computador
 			
 		
 		while_computador.end:
-		# *comando = 0
-		li $t0, 0
-		sw $t0, comando
 	
 	
 		jr $ra
@@ -215,16 +285,12 @@
 		while_jogadas:
 			lw $t0, jogadas
 			lw $t1, fimJogadas
-			lw $t2, comando
 			lw $t3, fimjogo
 			
 			bgt $t0, $t1, while_jogadas.end # Se jogadas > 4 sair do while
 			
-			beq $t2, 0, if_comando_fim_jogo # Se comando == 0 -> entrar no if
-			j if_comando_fim_jogo.end # Se for falso pular instrução
-			
 			if_comando_fim_jogo:
-				bne $t3, 0, if_comando_fim_jogo.end # Se fim jogo != 0 pular instruções
+				bne $t3, 0, while_jogadas.end # Se fim jogo != 0 finalizar programa
 				jal tabuleiro
 				jal usuario # pula pra função usuario
 				jal verificaFimJogo # pula pra função verificarFimJogo
@@ -234,15 +300,11 @@
 			j if_jogadas_fim_jogo.end # Se for falso pular if
 			
 			if_jogadas_fim_jogo:
-				bne $t3, 0, if_jogadas_fim_jogo.end # Se fim jogo != 0 pular instruções
+				bne $t3, 0, while_jogadas.end # Se fim jogo != 0 finalizar programa
 				jal computador
 				jal verificaFimJogo
-				
 			
 			if_jogadas_fim_jogo.end:
-			
-			
-			
 			
 			
 			j while_jogadas
